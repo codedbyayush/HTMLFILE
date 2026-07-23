@@ -1,0 +1,325 @@
+/* ============================================================
+   HOW TO READ THIS FILE
+   ------------------------------------------------------------
+   Every rule below starts with a comment saying WHICH element in
+   index.html it controls, and WHAT it does. Read top to bottom
+   in the same order as the HTML: navbar -> hero -> rows -> modal.
+
+   The three CSS ideas used EVERYWHERE in this file:
+   1. position: fixed/absolute  -> "float" something over other content
+   2. display: flex             -> line elements up in a row or column
+   3. transform / transition    -> smooth hover/scale/move animations
+   Once those three click for you, 90% of this file will make sense.
+   ============================================================ */
+
+/* ---- reset: browsers add random default spacing, this removes it ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* padding/border no longer add to element's width */
+}
+
+body {
+  background-color: #141414; /* Netflix's signature near-black */
+  color: #ffffff;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ============================================================
+   NAVBAR  (targets <nav class="navbar">)
+   ============================================================ */
+.navbar {
+  position: fixed;        /* stays on screen even when you scroll */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;           /* sits ABOVE the hero image, not behind it */
+  display: flex;                  /* lines up left group + right group */
+  justify-content: space-between; /* pushes them to opposite ends */
+  align-items: center;
+  padding: 18px 40px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  transition: background-color 0.4s ease; /* smooth fade when JS adds .scrolled */
+}
+
+/* JS ADDS THIS CLASS when the user scrolls down (see script.js) */
+.navbar.scrolled {
+  background-color: #141414;
+  background-image: none;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.logo {
+  color: #e50914; /* Netflix red */
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.logo-clone {
+  font-size: 12px;
+  color: #ffffff;
+  vertical-align: super;
+  margin-left: 4px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none; /* removes the bullet points from <ul> */
+  gap: 20px;
+}
+
+.nav-links li {
+  font-size: 14px;
+  color: #d2d2d2;
+  cursor: pointer;
+}
+
+.nav-links li:hover,
+.nav-links li.active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px; /* Netflix uses slightly-rounded squares, not circles */
+  background: linear-gradient(135deg, #e50914, #831010);
+}
+
+/* ============================================================
+   HERO BANNER  (targets <header class="hero">)
+   ============================================================ */
+.hero {
+  position: relative;      /* lets .hero-overlay sit on top with "absolute" */
+  height: 90vh;            /* 90% of the browser window's height */
+  background: url('https://picsum.photos/seed/hero/1600/900') center/cover no-repeat;
+  display: flex;
+  align-items: center;     /* vertically centers hero-content */
+}
+
+/* Dark gradient so white text is readable over any image */
+.hero-overlay {
+  position: absolute;
+  inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0; */
+  background: linear-gradient(to top, #141414 5%, transparent 50%),
+              linear-gradient(to right, rgba(0,0,0,0.7), transparent 60%);
+}
+
+.hero-content {
+  position: relative; /* so it renders ABOVE .hero-overlay, not under it */
+  z-index: 2;
+  max-width: 550px;
+  padding-left: 60px;
+}
+
+.hero-title {
+  font-size: 56px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.hero-desc {
+  font-size: 17px;
+  line-height: 1.5;
+  color: #e5e5e5;
+  margin-bottom: 25px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.btn {
+  padding: 10px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.2s ease; /* smooth fade on hover */
+}
+
+.btn-play {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.btn-info {
+  background-color: rgba(109, 109, 110, 0.6);
+  color: #ffffff;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+/* ============================================================
+   CONTENT ROWS  (targets <section class="row">)
+   ============================================================ */
+.content {
+  margin-top: -100px; /* pulls the rows up so they overlap the hero slightly */
+  position: relative;
+  z-index: 3;
+  padding: 0 40px 60px;
+}
+
+.row {
+  position: relative; /* so the arrow buttons can be "absolute" inside it */
+  margin-bottom: 40px;
+}
+
+.row-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+/* The scrolling strip of posters */
+.row-cards {
+  display: flex;           /* lines all posters up horizontally */
+  gap: 8px;
+  overflow-x: auto;        /* enables horizontal scrolling */
+  scroll-behavior: smooth;  /* animates JS-triggered scrolling */
+  scrollbar-width: none;    /* hides scrollbar on Firefox */
+}
+.row-cards::-webkit-scrollbar {
+  display: none; /* hides scrollbar on Chrome/Safari */
+}
+
+.card {
+  height: 170px;
+  width: auto;
+  border-radius: 4px;
+  flex-shrink: 0;      /* stops posters from squishing to fit */
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.08);              /* the classic Netflix hover zoom */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  z-index: 5;
+}
+
+/* Left/right scroll buttons.
+   JS listens for clicks on these (see script.js) and scrolls .row-cards */
+.row-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 170px;
+  width: 40px;
+  background: rgba(20,20,20,0.6);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0; /* invisible until the row is hovered */
+  transition: opacity 0.2s ease;
+}
+.row:hover .row-arrow {
+  opacity: 1; /* fades in only when the mouse is over the row */
+}
+.row-arrow.left { left: 0; }
+.row-arrow.right { right: 0; }
+
+/* ============================================================
+   MODAL  (targets <div class="modal-overlay">)
+   ============================================================ */
+.modal-overlay {
+  display: none;           /* JS switches this to "flex" to show it */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+/* JS adds this class to actually reveal the modal */
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-box {
+  position: relative;
+  background: #181818;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+  padding-bottom: 20px;
+}
+
+.modal-img {
+  width: 100%;
+  display: block;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.modal-title {
+  padding: 15px 20px 0;
+}
+
+.modal-desc {
+  padding: 10px 20px 0;
+  color: #cccccc;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: #808080;
+  font-size: 13px;
+}
+
+/* ============================================================
+   RESPONSIVE: rules that only apply on small screens.
+   Everything inside this block OVERRIDES the rules above,
+   but only when the screen is 700px wide or less.
+   ============================================================ */
+@media (max-width: 700px) {
+  .nav-links { display: none; } /* hide nav links on mobile to save space */
+  .hero-title { font-size: 34px; }
+  .hero-content { padding-left: 20px; }
+  .hero-desc { font-size: 14px; }
+  .card { height: 120px; }
+}

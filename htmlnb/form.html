@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>REGISTRATION FORM</h1>
+    <form action="submit" method="get">
+        <!--Text-->
+        <label>Full Name:</label>
+    <input type="text" name="Fullname" placeholder="Enter your Full name"><br><br>
+    <!--Password-->
+    <label>Password:</label>
+    <input type="password" name="password"><br><br>
+    <!--Email-->
+    <label>Email:</label>
+    <input type="email" name="email"><br><br>
+    <!--Number-->
+    <label>Age:</label>
+    <input type="number" name="age" min="1" max="100"><br><br>
+    <!--Date of Birth-->
+    <label>Date of Birth:</label>
+    <input type="date" name="dob"><br><br>
+    <!--Preferred Time-->
+    <label>Preferred Time:</label>
+    <input type="time" name="time"><br><br>
+    <!--Color Picker-->
+    <label>Favorite color:</label>
+    <input type="color" name="color"><br><br>
+    <label>Course Interested:</label>
+    <!--Checkbox-->
+    <input type="checkbox" name="course" value="Html">HTML
+    <input type="checkbox" name="course" value="css">CSS
+    <input type="checkbox" name="course" value="js">JavaScript<br><br>
+    <!--Radio-->
+    <label>Gender:</label><br>
+    <input type="radio" name="gender" value="male">Male
+    <input type="radio" name="gender" value="female">Female
+    <input type="radio" name="gender" value="other">Other<br><br>
+    <!--Dropdown-->
+    <label>Country:</label>
+    <select name="country">
+        <option value="india">India</option>
+        <option value="usa">USA</option>
+        <option value="uk">UK</option>
+        <option value="uae">UAE</option>
+    </select><br><br>
+    <!--Textarea-->
+    <label>Address::</label><br>
+    <textarea name="address" rows="4" cols="40"></textarea><br><br>
+    <!--Buttons-->
+    <!--Upload a file-->
+    <label>Upload File:</label>
+    <input type="file" name="resume"><br><br>
+    <!--range slider-->
+    <label>Experience:</label>
+    <input type="range" name="experience" min="0" max="10"><br><br>
+    <!--Submit, Reset, Button-->
+    <input type="submit" value="Submit">
+    <input type="reset" value="Reset">
+    <input type="button" value="Click Me" onclick="alert('Button Clicked')"><br><br>
+      </form>
+</body>
+</html>

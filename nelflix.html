@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NETFLIX</title>
+
+
+<link rel="stylesheet" href="stylingnetflix.css">
+</head>
+<body>
+
+
+  <nav class="navbar" id="navbar">
+    <div class="navbar-left">
+      <h1 class="logo">NETFLIX</h1>
+      <ul class="nav-links">
+        <li class="active">Home</li>
+        <li>TV Shows</li>
+        <li>Movies</li>
+        <li>New & Popular</li>
+        <li>My List</li>
+      </ul>
+    </div>
+    <div class="navbar-right">
+      <span class="icon">🔍</span>
+      <span class="icon">🔔</span>
+      <div class="profile-icon"></div>
+    </div>
+  </nav>
+
+ 
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h2 class="hero-title">Stranger Things</h2>
+      <p class="hero-desc">
+        When a small town's power grid glitches every night at 8pm,
+        four friends discover the cause lives in the basement —
+        and it doesn't like visitors.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn btn-play">▶ Play</button>
+        <button class="btn btn-info">ⓘ More Info</button>
+      </div>
+    </div>
+  </header>
+
+  
+  <main class="content">
+
+    <section class="row" data-row="trending">
+      <h3 class="row-title">Trending Now</h3>
+      <button class="row-arrow left" data-target="trending">&#10094;</button>
+      <div class="row-cards" id="trending">
+        <video class="card" src="https://www.w3schools.com/html/mov_bbb.mp4" autoplay muted loop></video>
+        <img class="card" src="https://picsum.photos/seed/t2/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t3/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t4/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t5/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t6/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t7/300/450" alt="movie poster">
+        <img class="card" src="https://picsum.photos/seed/t8/300/450" alt="movie poster">   
+      </div>
+      <button class="row-arrow right" data-target="trending">&#10095;</button>
+    </section>
+
+    <section class="row" data-row="popular">
+      <h3 class="row-title">Popular on Netflix</h3>
+      <button class="row-arrow left" data-target="popular">&#10094;</button>
+      <div class="row-cards" id="popular">
+        <video class="card" src="https://www.w3schools.com/html/mov_bbb.mp4" autoplay muted loop></video>
+        <video class="card" src ="https://www.filmywap.com/videos/dhamaal-4.mp4" autoplay muted loop></video>
+        <video class="card" src="https://www.filmywap.com/videos/dhurandhar.mp4" autoplay muted loop></video>
+        <video class="card" src="https://www.filmywap.com/videos/single-papa.mp4" autoplay muted loop></video>
+      </div>
+      <button class="row-arrow right" data-target="popular">&#10095;</button>
+    </section>
+
+    <section class="row" data-row="new">
+      <h3 class="row-title">New Releases</h3>
+      <button class="row-arrow left" data-target="new">&#10094;</button>
+      <div class="row-cards" id="new">
+        <video class="card" src="https://www.filmywap.com/videos/alpha.mp4" autoplay muted loop></video>    
+        <video class="card" src="https://www.filmywap.com/videos/single-papa.mp4" autoplay muted loop></video>
+        <video class="card" src="https://www.filmywap.com/videos/dhurandhar-the-revenge.mp4" autoplay muted loop></video>
+
+      </div>
+      <button class="row-arrow right" data-target="new">&#10095;</button>
+    </section>
+
+  </main>
+
+ 
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose">&times;</button>
+      <img class="modal-img" id="modalImg" src="" alt="poster">
+      <h2 class="modal-title" id="modalTitle">Title</h2>
+      <p class="modal-desc" id="modalDesc">Description goes here.</p>
+    </div>
+  </div>
+
+ 
+    <p>This is a practice clone built for learning HTML, CSS & JavaScript. Not affiliated with Netflix.</p>
+  </footer>
+
+ 
+  <script src="scriptnetflix.js"></script>
+</body>
+</html>

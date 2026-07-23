@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>College Placement Job Form</h1>
+    <form action ="submit_job" method ="post">
+        <label>Name:</label>
+        <input type="text" name="name" placeholder="Enter your name"><br><br>
+        <label>Email:</label>
+        <input type="email" name="email" placeholder="Enter your email"><br><br>
+        <label>Gender:</label><br>
+        <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
+        <input type="radio" name="gender" value="other"> Other<br><br>
+        <mark><label>Job Type:</label><br></mark>
+        <input type="radio" name="jobtype" value="internship"> Internship
+        <input type="radio" name="jobtype" value="fulltime"> Part-Time Job
+        <input type="radio" name="jobtype" value="freelance"> Freelance
+        <input type="radio" name="jobtype" value="remote"> Remote Job<br><br>  
+        <label>Application Number:</label>
+        <input type="text" name="application number"><br><br>
+        <label>Branch:</label>
+        <input type="text" name="branch"><br><br>
+        <label>CGPA:</label>
+        <input type="float" name="cgpa"><br><br>
+        <label>Skills Selection:</label>
+        <input type="text" name="skills"><br><br>
+        <label>Resume Upload:</label>
+        <input type="file" name="resume"><br><br>
+        <input type="checkbox" name ="declaration">I hereby declare that the above information is true to the best of my knowledge<br><br>
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
+        <input type="button" value="Cancel">
+    </form>
+    
+</body>
+</html>

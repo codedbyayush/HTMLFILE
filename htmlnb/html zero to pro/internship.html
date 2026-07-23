@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship page</title>
+</head>
+<body>
+    <h1>Internship Information</h1>
+    <form>
+        <label for="Candidate Name">Candidate Name:</label><br>
+        <!--Placeholder for Candidate Name input field-->
+        <input type="text" id="cname" name="cname" placeholder="Enter your name"><br><br>
+        <label for="College Name">College Name:</label><br> 
+        <input type="text" id="colname" name="colname" placeholder="Enter your college name"><br><br>
+        <label for="Email">Email:</label><br>
+        <input type="email" id="email" name="email" placeholder="Enter your email"><br><br>
+        <label for="Phone Number">Phone Number:</label><br>
+        <input type="tel" id="Phone" name="Phone" placeholder="Enter your phone number"><br><br>
+        <label for="Internship Role">Internship Role:</label><br>
+        <input type="radio" name="role" value="developer">Developer
+        <input type="radio" name="role" value="designer">Designer
+        <input type="radio" name="role" value="marketing">Marketing<br><br>
+        <label for="Duration">Duration (in months):</label><br>
+        <input type="number" id="duration" name="duration" placeholder="Enter duration"><br><br>
+        <label for="Start Date">Preferred Start Date:</label><br>
+        <input type="date" id="startdate" name="startdate"><br><br>
+        <label for="Resume">Resume:</label><br>
+        <input type="file" id="resume" name="resume"><br><br>
+        <label for="Cover Letter">Cover Letter:</label><br>
+        <input type="radio" name="availability" value="part-time">Part-time
+        <input type="radio" name="availability" value="full-time">Full-time
+        <input type="radio" name="availability" value="remote">Remote<br><br>
+        <label for="Preferred Time">Preferred Time:</label><br>
+        <input type="time" id="preferred_time" name="preferred_time"><br><br>
+        <label for="Proficiency">Proficiency Level:</label><br>
+        <select id="proficiency" name="proficiency">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+        </select><br><br>
+        <label for="Cover Letter">Cover Letter:</label><br>
+        <textarea id="coverletter" name="coverletter" rows="4" cols="40" placeholder="Write your cover letter here"></textarea><br><br>
+        <input type="checkbox" name="terms">I agree to the terms and conditions<br><br>
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
+        <input type="button" value="Cancel">
+
+    </form>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cricket Quiz Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --stadium: #0F2E20;
+    --pitch: #1C4A32;
+    --pitch-light: #285C3F;
+    --willow: #E3C088;
+    --willow-dim: #C9A66B;
+    --scoreboard: #10120F;
+    --led: #FFC93C;
+    --led-dim: #7A5E1C;
+    --chalk: #F4F1E8;
+    --boundary: #C1272D;
+    --six-blue: #2E86AB;
+    --focus: #FFC93C;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 50% -10%, var(--pitch-light), transparent 60%),
+      var(--stadium);
+    font-family: 'Inter', sans-serif;
+    color: var(--chalk);
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 60px;
+  }
+
+  .stadium {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  h1, h2, .display-num, .stat-value {
+    font-family: 'Teko', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- Scoreboard header ---------- */
+  .scoreboard {
+    background: var(--scoreboard);
+    border: 2px solid #2A2E28;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  .scoreboard-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .scoreboard-title {
+    font-family: 'Teko', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    color: var(--willow);
+    text-transform: uppercase;
+  }
+
+  .mute-btn {
+    background: #191C17;
+    border: 1px solid #2A2E28;
+    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--chalk);
+    flex-shrink: 0;
+    transition: background 0.15s ease;
+  }
+
+  .mute-btn:hover { background: #23271F; }
+
+  .scoreboard-stats {
+    display: flex;
+    gap: 10px;
+  }
+
+  .stat {
+    flex: 1;
+    text-align: center;
+    background: #191C17;
+    border-radius: 6px;
+    padding: 6px 4px 8px;
+    border: 1px solid #2A2E28;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: #8A8F86;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 2px;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 28px;
+    color: var(--led);
+    font-family: 'Space Mono', monospace;
+    text-shadow: 0 0 8px rgba(255,201,60,0.35);
+  }
+
+  /* ---------- Intro ---------- */
+  .intro-card, .result-card {
+    background: var(--pitch);
+    border-radius: 14px;
+    padding: 36px 26px;
+    text-align: center;
+    border: 1px solid rgba(227,192,136,0.15);
+  }
+
+  .intro-card h1 {
+    font-size: 44px;
+    margin: 0 0 12px;
+    color: var(--chalk);
+  }
+
+  .intro-card p {
+    color: #CFE3D6;
+    line-height: 1.5;
+    max-width: 46ch;
+    margin: 0 auto 24px;
+  }
+
+  button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #startBtn, .play-again-btn {
+    background: var(--willow);
+    color: #1C1204;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  #startBtn:hover, .play-again-btn:hover { background: #EFD29E; }
+  #startBtn:active, .play-again-btn:active { transform: scale(0.97); }
+
+  /* ---------- Pitch / question card ---------- */
+  .pitch-card {
+    background: var(--pitch);
+    border-radius: 14px;
+    padding: 22px 22px 26px;
+    border: 1px solid rgba(227,192,136,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pitch-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 2px,
+      transparent 2px,
+      transparent 40px
+    );
+    pointer-events: none;
+  }
+
+  .over-balls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .ball-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--boundary);
+    box-shadow: 0 0 6px rgba(193,39,45,0.6);
+    transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .ball-dot.spent {
+    background: #3A4A3F;
+    box-shadow: none;
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+
+  .question-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--willow-dim);
+    margin: 0 0 8px;
+  }
+
+  .question-text {
+    font-size: 30px;
+    line-height: 1.15;
+    margin: 0 0 20px;
+    color: var(--chalk);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .question-text { font-size: 25px; }
+  }
+
+  .option-btn {
+    background: #F4F1E8;
+    color: #16321F;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 14px;
+    font-size: 15px;
+    text-align: left;
+    line-height: 1.3;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-btn.correct {
+    background: #3E8E5A;
+    color: #F4F1E8;
+  }
+
+  .option-btn.wrong {
+    background: var(--boundary);
+    color: #F4F1E8;
+  }
+
+  .feedback {
+    min-height: 26px;
+    margin: 16px 0 0;
+    font-family: 'Teko', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .feedback.six { color: var(--six-blue); }
+  .feedback.four { color: var(--led); }
+  .feedback.out { color: var(--boundary); }
+  .feedback.dot { color: #8FA89A; }
+
+  /* ---------- Result ---------- */
+  .result-card h2 {
+    font-size: 40px;
+    margin: 0 0 10px;
+    color: var(--led);
+  }
+
+  .result-card p {
+    color: #CFE3D6;
+    margin: 0 0 24px;
+    font-size: 16px;
+  }
+
+  .hidden { display: none !important; }
+
+  button:focus-visible, .option-btn:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* ---------- Milestone celebration overlay ---------- */
+  .celebration-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    pointer-events: none;
+    animation: flash-bg 2s ease forwards;
+  }
+
+  .celebration-overlay.hidden { display: none; }
+
+  @keyframes flash-bg {
+    0%   { background: rgba(255,201,60,0); }
+    8%   { background: rgba(255,201,60,0.28); }
+    22%  { background: rgba(255,201,60,0); }
+    100% { background: rgba(255,201,60,0); }
+  }
+
+  .celebration-content {
+    position: relative;
+    text-align: center;
+    padding: 0 24px;
+  }
+
+  .celebration-text {
+    font-family: 'Teko', sans-serif;
+    font-size: 42px;
+    letter-spacing: 0.03em;
+    color: var(--led);
+    text-shadow: 0 0 20px rgba(255,201,60,0.85), 0 0 42px rgba(255,201,60,0.45);
+    animation: celebration-pop 0.55s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes celebration-pop {
+    0%   { transform: scale(0.4); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .burst-particle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 26px;
+    animation: burst-particle 1.5s ease-out forwards;
+  }
+
+  @keyframes burst-particle {
+    0%   { transform: translate(-50%, -50%) rotate(var(--rot)) translateY(0) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) rotate(var(--rot)) translateY(var(--dist)) scale(0.5); opacity: 0; }
+  }
+
+  /* ---------- Result-screen confetti ---------- */
+  .result-card { position: relative; overflow: hidden; }
+
+  .result-burst {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    top: -24px;
+    font-size: 20px;
+    animation-name: confetti-fall;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes confetti-fall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(340px) rotate(360deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="stadium">
+
+  <header class="scoreboard">
+    <div class="scoreboard-title-row">
+      <div class="scoreboard-title">🏏 Cricket Quiz Challenge</div>
+      <button class="mute-btn" id="muteBtn" aria-label="Toggle sound" aria-pressed="false">🔊</button>
+    </div>
+    <div class="scoreboard-stats">
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span class="stat-value" id="scoreDisplay">000</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Wickets</span>
+        <span class="stat-value" id="wicketsDisplay">0/3</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Over</span>
+        <span class="stat-value" id="overDisplay">0/10</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="intro-card" id="introScreen">
+    <h1>Are you ready to bat?</h1>
+    <p>Ten deliveries, three wickets in hand. Answer quick for a boundary bonus — hesitate and you might just get bowled.</p>
+    <button id="startBtn">Start Innings</button>
+  </section>
+
+  <main class="pitch-card hidden" id="gameScreen">
+    <div class="over-balls" id="ballTracker"></div>
+    <p class="question-eyebrow" id="questionEyebrow">Delivery 1 of 10</p>
+    <h2 class="question-text" id="questionText"></h2>
+    <div class="options-grid" id="optionsGrid"></div>
+    <p class="feedback" id="feedback"></p>
+  </main>
+
+  <section class="result-card hidden" id="resultScreen">
+    <div class="result-burst" id="resultBurst"></div>
+    <h2 id="resultVerdict"></h2>
+    <p id="resultScoreline"></p>
+    <button class="play-again-btn" id="playAgainBtn">Play Again</button>
+  </section>
+
+</div>
+
+<div class="celebration-overlay hidden" id="celebrationOverlay">
+  <div class="celebration-content">
+    <div id="emojiBurst"></div>
+    <h2 class="celebration-text" id="celebrationText"></h2>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "How many players are there on the field for one team in cricket?",
+      options: ["9", "10", "11", "12"],
+      correct: 2
+    },
+    {
+      q: "How many balls make up one over?",
+      options: ["4", "5", "6", "8"],
+      correct: 2
+    },
+    {
+      q: "What is it called when a batsman is dismissed for zero runs?",
+      options: ["A Golden Duck", "A Duck", "A Blank", "A Zero"],
+      correct: 1
+    },
+    {
+      q: "Which country has won the most Cricket World Cups (ODI)?",
+      options: ["India", "West Indies", "Australia", "England"],
+      correct: 2
+    },
+    {
+      q: "What does LBW stand for?",
+      options: ["Leg Before Wicket", "Last Ball Win", "Leg Behind Wall", "Long Ball Wide"],
+      correct: 0
+    },
+    {
+      q: "Who holds the record for the most international centuries?",
+      options: ["Virat Kohli", "Ricky Ponting", "Sachin Tendulkar", "Kumar Sangakkara"],
+      correct: 2
+    },
+    {
+      q: "How many overs are bowled per side in a standard ODI match?",
+      options: ["20", "40", "50", "60"],
+      correct: 2
+    },
+    {
+      q: "What do you call three wickets taken on three consecutive balls?",
+      options: ["A Triple", "A Hat-trick", "A Treble", "A Trifecta"],
+      correct: 1
+    },
+    {
+      q: "Which historic urn is contested between England and Australia?",
+      options: ["The Ashes", "The Golden Bail", "The Wisden Cup", "The Empire Trophy"],
+      correct: 0
+    },
+    {
+      q: "Former Indian batsman Rahul Dravid is nicknamed what, for his defensive solidity?",
+      options: ["The Rock", "The Wall", "The Fortress", "The Anchor"],
+      correct: 1
+    }
+  ];
+
+  const TOTAL_BALLS = 6;
+  const BALL_MS = 2200;
+  const MAX_WICKETS = 3;
+
+  let currentIndex = 0;
+  let score = 0;
+  let wickets = 0;
+  let ballsUsed = 0;
+  let ballTimerId = null;
+  let answered = false;
+  let activeQuestions = [];
+  let milestonesHit = new Set();
+  let celebrationTimerId = null;
+
+  const MILESTONES = [
+    { at: 50,  text: 'HALF-CENTURY!',              emoji: '🎉' },
+    { at: 100, text: 'CENTURY!',                   emoji: '💯' },
+    { at: 150, text: '150 UP — INCREDIBLE!',       emoji: '🎆' },
+    { at: 200, text: 'DOUBLE CENTURY — LEGENDARY!', emoji: '🏆' }
+  ];
+
+  // ---------- Sound engine (all synthesized, no audio files needed) ----------
+  let audioCtx = null;
+  let masterGain = null;
+  let ambientSource = null;
+  let isMuted = false;
+
+  function initAudio() {
+    if (audioCtx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    audioCtx = new AC();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = isMuted ? 0 : 0.8;
+    masterGain.connect(audioCtx.destination);
+  }
+
+  function createNoiseBuffer(duration) {
+    const size = Math.max(1, Math.floor(audioCtx.sampleRate * duration));
+    const buffer = audioCtx.createBuffer(1, size, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < size; i++) data[i] = Math.random() * 2 - 1;
+    return buffer;
+  }
+
+  function playTone(freq, duration, type, peakGain) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(peakGain, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function playBallTick() {
+    if (!audioCtx) return;
+    playTone(1300, 0.045, 'square', 0.08);
+  }
+
+  function playBatHit() {
+    if (!audioCtx) return;
+    // crisp bat "thwock": short filtered noise crack + a low body thump
+    const noiseSrc = audioCtx.createBufferSource();
+    noiseSrc.buffer = createNoiseBuffer(0.12);
+    const noiseFilter = audioCtx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 1800;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+    noiseSrc.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(masterGain);
+    noiseSrc.start();
+
+    playTone(160, 0.18, 'sine', 0.28);
+  }
+
+  function playWicketThud() {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(48, audioCtx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.4);
+  }
+
+  function playCheer(duration) {
+    if (!audioCtx) return;
+    duration = duration || 1.6;
+    const src = audioCtx.createBufferSource();
+    src.buffer = createNoiseBuffer(duration);
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 900;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.32, audioCtx.currentTime + duration * 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+    src.start();
+  }
+
+  function playFanfare() {
+    if (!audioCtx) return;
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+    notes.forEach((freq, i) => {
+      setTimeout(() => playTone(freq, 0.28, 'triangle', 0.18), i * 90);
+    });
+    playCheer(1.8);
+  }
+
+  function playWoohoo() {
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+
+  // Victory melody (pleasant game sound)
+  const notes = [
+    { f: 523.25, t: 0.00 }, // C5
+    { f: 659.25, t: 0.09 }, // E5
+    { f: 783.99, t: 0.18 }, // G5
+    { f: 1046.50, t: 0.30 } // C6
+  ];
+
+  notes.forEach(note => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "triangle";
+    osc.frequency.value = note.f;
+
+    gain.gain.setValueAtTime(0.0001, now + note.t);
+    gain.gain.exponentialRampToValueAtTime(0.22, now + note.t + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + note.t + 0.18);
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(now + note.t);
+    osc.stop(now + note.t + 0.2);
+  });
+}
+
+  function playDisappointed() {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const notes = [392.00, 369.99, 349.23, 311.13]; // descending "sad trombone" motif
+    const noteDur = 0.22;
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      const startTime = now + i * noteDur;
+      const isLast = i === notes.length - 1;
+      osc.frequency.setValueAtTime(freq, startTime);
+      if (isLast) {
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.85, startTime + noteDur * 1.4);
+      }
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.22, startTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDur * (isLast ? 1.4 : 1));
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(startTime);
+      osc.stop(startTime + noteDur * 1.5);
+    });
+  }
+
+  function startAmbientCrowd() {
+    if (!audioCtx || ambientSource) return;
+    const src = audioCtx.createBufferSource();
+    src.buffer = createNoiseBuffer(4);
+    src.loop = true;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 450;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.035;
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+    src.start();
+    ambientSource = src;
+  }
+
+  function stopAmbientCrowd() {
+    if (ambientSource) {
+      try { ambientSource.stop(); } catch (e) {}
+      ambientSource.disconnect();
+      ambientSource = null;
+    }
+  }
+
+  function toggleMute() {
+    initAudio();
+    isMuted = !isMuted;
+    if (masterGain) masterGain.gain.value = isMuted ? 0 : 0.8;
+    muteBtn.textContent = isMuted ? '🔇' : '🔊';
+    muteBtn.setAttribute('aria-pressed', String(isMuted));
+  }
+
+  function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  // Builds a fresh, shuffled set: question order shuffled, and each
+  // question's own options shuffled (correct index recalculated to match).
+  function buildActiveQuestions() {
+    const shuffledQuestions = shuffle(questions);
+    return shuffledQuestions.map(q => {
+      const correctText = q.options[q.correct];
+      const shuffledOptions = shuffle(q.options);
+      return {
+        q: q.q,
+        options: shuffledOptions,
+        correct: shuffledOptions.indexOf(correctText)
+      };
+    });
+  }
+
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const wicketsDisplay = document.getElementById('wicketsDisplay');
+  const overDisplay = document.getElementById('overDisplay');
+  const introScreen = document.getElementById('introScreen');
+  const gameScreen = document.getElementById('gameScreen');
+  const resultScreen = document.getElementById('resultScreen');
+  const ballTracker = document.getElementById('ballTracker');
+  const questionEyebrow = document.getElementById('questionEyebrow');
+  const questionText = document.getElementById('questionText');
+  const optionsGrid = document.getElementById('optionsGrid');
+  const feedback = document.getElementById('feedback');
+  const celebrationOverlay = document.getElementById('celebrationOverlay');
+  const celebrationText = document.getElementById('celebrationText');
+  const emojiBurst = document.getElementById('emojiBurst');
+  const resultBurst = document.getElementById('resultBurst');
+  const muteBtn = document.getElementById('muteBtn');
+
+  document.getElementById('startBtn').addEventListener('click', startGame);
+  document.getElementById('playAgainBtn').addEventListener('click', startGame);
+  muteBtn.addEventListener('click', toggleMute);
+
+  function startGame() {
+    currentIndex = 0;
+    score = 0;
+    wickets = 0;
+    milestonesHit = new Set();
+    clearTimeout(celebrationTimerId);
+    celebrationOverlay.classList.add('hidden');
+    activeQuestions = buildActiveQuestions();
+    updateScoreboard();
+    introScreen.classList.add('hidden');
+    resultScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    startAmbientCrowd();
+
+    renderQuestion();
+  }
+
+  function updateScoreboard() {
+    scoreDisplay.textContent = String(score).padStart(3, '0');
+    wicketsDisplay.textContent = `${wickets}/${MAX_WICKETS}`;
+    overDisplay.textContent = `${currentIndex}/${activeQuestions.length}`;
+  }
+
+  function renderBallTracker() {
+    ballTracker.innerHTML = '';
+    for (let i = 0; i < TOTAL_BALLS; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'ball-dot';
+      if (i < ballsUsed) dot.classList.add('spent');
+      ballTracker.appendChild(dot);
+    }
+  }
+
+  function renderQuestion() {
+    answered = false;
+    ballsUsed = 0;
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+    updateScoreboard();
+    renderBallTracker();
+
+    const q = activeQuestions[currentIndex];
+    questionEyebrow.textContent = `Delivery ${currentIndex + 1} of ${activeQuestions.length}`;
+    questionText.textContent = q.q;
+
+    optionsGrid.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => selectAnswer(i, btn));
+      optionsGrid.appendChild(btn);
+    });
+
+    startBallTimer();
+  }
+
+  function startBallTimer() {
+    clearInterval(ballTimerId);
+    ballTimerId = setInterval(() => {
+      ballsUsed++;
+      renderBallTracker();
+      playBallTick();
+      if (ballsUsed >= TOTAL_BALLS) {
+        clearInterval(ballTimerId);
+        if (!answered) selectAnswer(-1, null);
+      }
+    }, BALL_MS);
+  }
+
+  // Returns true if crossing oldScore -> newScore triggered a new milestone.
+  function checkMilestones(oldScore, newScore) {
+    let fired = false;
+    MILESTONES.forEach(m => {
+      if (newScore >= m.at && oldScore < m.at && !milestonesHit.has(m.at)) {
+        milestonesHit.add(m.at);
+        triggerCelebration(m);
+        fired = true;
+      }
+    });
+    return fired;
+  }
+
+  function triggerCelebration(milestone) {
+    playFanfare();
+    celebrationText.textContent = `${milestone.emoji} ${milestone.text} ${milestone.emoji}`;
+    emojiBurst.innerHTML = '';
+
+    const particleEmojis = ['🎉', '✨', '🎆', '🏏', '💥', '⭐'];
+    for (let i = 0; i < 26; i++) {
+      const p = document.createElement('span');
+      p.className = 'burst-particle';
+      p.textContent = particleEmojis[Math.floor(Math.random() * particleEmojis.length)];
+      const angle = Math.random() * 360;
+      const dist = 110 + Math.random() * 150;
+      p.style.setProperty('--rot', `${angle}deg`);
+      p.style.setProperty('--dist', `-${dist}px`);
+      p.style.animationDelay = `${Math.random() * 150}ms`;
+      emojiBurst.appendChild(p);
+    }
+
+    celebrationOverlay.classList.remove('hidden');
+    clearTimeout(celebrationTimerId);
+    celebrationTimerId = setTimeout(() => {
+      celebrationOverlay.classList.add('hidden');
+    }, 2000);
+  }
+
+  function triggerResultBurst() {
+    resultBurst.innerHTML = '';
+    const confettiEmojis = ['🎉', '🎊', '✨', '🏏', '⭐', '💥'];
+    for (let i = 0; i < 40; i++) {
+      const piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      piece.textContent = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.animationDuration = `${1.6 + Math.random() * 1.2}s`;
+      piece.style.animationDelay = `${Math.random() * 400}ms`;
+      resultBurst.appendChild(piece);
+    }
+  }
+
+  function selectAnswer(index, btnEl) {
+    if (answered) return;
+    answered = true;
+    clearInterval(ballTimerId);
+
+    const q = activeQuestions[currentIndex];
+    const buttons = optionsGrid.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    let milestoneTriggered = false;
+
+    if (index === q.correct) {
+      let runs = 10;
+      let tag = 'dot';
+      let msg = '+10 runs';
+      if (ballsUsed <= 1) {
+        runs = 16; tag = 'six'; msg = 'SIX! +16 runs';
+      } else if (ballsUsed <= 3) {
+        runs = 14; tag = 'four'; msg = 'FOUR! +14 runs';
+      }
+      const oldScore = score;
+      score += runs;
+      milestoneTriggered = checkMilestones(oldScore, score);
+      playBatHit();
+      playWoohoo();
+      buttons[q.correct].classList.add('correct');
+      feedback.textContent = msg;
+      feedback.classList.add(tag);
+    } else {
+      wickets++;
+      playWicketThud();
+      playDisappointed();
+      buttons[q.correct].classList.add('correct');
+      if (btnEl) btnEl.classList.add('wrong');
+      feedback.textContent = index === -1 ? 'Timed out — bowled!' : 'Wicket down!';
+      feedback.classList.add('out');
+    }
+
+    updateScoreboard();
+
+    const nextDelay = milestoneTriggered ? 2300 : 1300;
+    setTimeout(() => {
+      if (wickets >= MAX_WICKETS) {
+        endGame(true);
+        return;
+      }
+      currentIndex++;
+      if (currentIndex >= activeQuestions.length) {
+        endGame(false);
+      } else {
+        renderQuestion();
+      }
+    }, nextDelay);
+  }
+
+  function endGame(allOut) {
+    gameScreen.classList.add('hidden');
+    resultScreen.classList.remove('hidden');
+    stopAmbientCrowd();
+
+    const verdict = document.getElementById('resultVerdict');
+    const scoreline = document.getElementById('resultScoreline');
+
+    let title;
+    if (allOut) {
+      title = `ALL OUT for ${score}`;
+    } else if (score === 0) {
+      title = 'A Golden Duck';
+    } else if (score < 60) {
+      title = `${score} Not Out`;
+    } else if (score < 110) {
+      title = `Half-Century! ${score} Not Out`;
+    } else {
+      title = `Century! ${score} Not Out`;
+    }
+    verdict.textContent = title;
+    scoreline.textContent = `Final score: ${score} runs, ${wickets} wicket${wickets === 1 ? '' : 's'} down from ${currentIndex} over${currentIndex === 1 ? '' : 's'}.`;
+
+    if (score >= 50) {
+      triggerResultBurst();
+      playCheer(2.0);
+    } else {
+      resultBurst.innerHTML = '';
+    }
+  }
+</script>
+</body>
+</html>
